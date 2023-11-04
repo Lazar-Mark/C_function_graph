@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 int velicina_broja(int n){
     int brojac=0;
     if(n<0)n=-n;
+    if(n==0)return 1;
     while(1){
             if(n<=0)
             break;
@@ -107,22 +109,43 @@ void resi_izraz(char* izraz,int vrednost){
     int broj3=0;
 
     char* temp =izraz;
-    printf("Usao je u resi_izraz\n");
+
    while(*izraz !=0){
-         printf("while u resi izraz\n");
+
         //resavanje x
         if(*izraz =='x'){
-            izraz--;
-             while(*izraz>='0' && *izraz<='9'){
-                    if(izraz==temp)break;
+            if(izraz!=temp){
                 izraz--;
+                 while(*izraz>='0' && *izraz<='9'){
+                        if(izraz==temp)break;
+                    izraz--;
+                 }
+
+            }
+            if(*izraz=='-')izraz++;
+             //ako je pointer na x samo uzima vrednost
+             if(*izraz=='x'){
+                broj3=1;
+                izbrisi_karaktere(izraz,velicina_broja(broj3));//+1 za x
+                dodaj_mesto(izraz,velicina_broja(broj3*vrednost));
+                dodaj_broj(izraz,broj3*vrednost);
+
              }
 
-             broj3=atoi(izraz);
-             izbrisi_karaktere(izraz,velicina_broja(broj3)+1);//+1 za x
-             dodaj_mesto(izraz,velicina_broja(broj3*vrednost));
-             dodaj_broj(izraz+velicina_broja(broj3*vrednost)-1,broj3*vrednost);
-            izraz+=velicina_broja(broj3*vrednost);
+            else{
+
+            broj3=atoi(izraz);
+            izbrisi_karaktere(izraz,velicina_broja(broj3)+1); //+1 za x
+            dodaj_mesto(izraz,velicina_broja(broj3*vrednost));
+            dodaj_broj(izraz,broj3*vrednost);
+
+            }
+
+
+
+             izraz+=velicina_broja(broj3*vrednost);
+
+
         }
 
 
@@ -150,31 +173,66 @@ void resi_izraz(char* izraz,int vrednost){
 
     izraz++;
    }
-    printf("izasao je i treba da printa rezultat\n");
+
     izraz=temp;
     printf("Sredjen izraz: %s\n",izraz);
     printf("Resenje: %d\n",izracunaj_izraz(izraz));
 }
-// primer 2x+2*4+3*5
+// primer 2x+2*2-1
+void ispisi_sistem(int n,int* x,int* y){
 
+     for(int i=0;i<n;i++){
+
+         for(int j=0;j<n;j++){
+
+        if(i==(n/2  - *(y+j)) && j==(*(x+j) + n/2   )){ // greska?
+           // printf("Usao sam");
+           printf(".");
+           //printf("%d", *(x+j));
+
+        }
+        else if(j==n/2)printf("%c",186);
+        else if(i==n/2)printf("%c",205);
+
+        else printf(" ");
+        }
+
+
+        printf("\n");
+
+    }
+
+}
 int main(){
+   //uzimam izraz
     printf("Unesi funkciju tipa 2x+4*3+2\n");
     char izraz[128];
     fgets(izraz,128,stdin);
     izraz[strlen(izraz)-1]=0;
+    //pravim backup izraza
+    char izraz1[128];
+    strcpy(izraz1, izraz);
+    //pravim niz resenja
+    int y[1024];
+    int x[1024];
+    //kretanje kroz niz i ubacivanje resenja i x promenljive
+    int brojac=0;
+    int broj_vrednosti = 30;
 
-    //ovo ne radi
+   // resi_izraz(izraz,2);
 
+    for(int i=0;i<broj_vrednosti;i++){
+    resi_izraz(izraz,i);
+    y[brojac]=izracunaj_izraz(izraz);
+    x[brojac]=i - broj_vrednosti / 2; // da opseg od npr 30 ide od -15 do 14 da bi se na grafiku printovalo skroz od levo do skroz desno
+    strcpy(izraz, izraz1);
+    brojac++;
 
+    }
 
-    //ovo radi
-        resi_izraz(izraz,5);
+    ispisi_sistem(broj_vrednosti,x,y);
 
-
-
-
-
-   //resi_izraz(izraz,2);
+//getchar();
 
 
 
